@@ -1,33 +1,29 @@
 import math, numpy, matplotlib.pyplot as plt
+from scipy.misc import derivative
 
 l  = 1
-k  = 1
+mp = 2
+k  = 10
 dx = 1e-2
 
-mp = 2
+u   = lambda x: math.e**x * math.sin(x)**2
+f   = lambda x: 0.5 * math.e**x * ( 4 * math.sin(2 * x) + 3 * math.cos(2 * x) + 1 )
 
 A = 0
 B = math.e**l * math.sin(l)**2 / l
 
 #bas = lambda i: lambda x: x**i * ( l - x )**i
-bas = lambda i: lambda x: x**i * ( l - x )
-phi = [ bas(i) for i in range(mp, k + mp) ]
+bas = lambda i: lambda x: x**(i + mp) * ( l - x )
+phi = [ bas(i) for i in range( k ) ]
 
-u   = lambda x: math.e**x * math.sin(x)**2
-f   = lambda x: 0.5 * math.e**x * ( 4 * math.sin(2 * x) + 3 * math.cos(2 * x) + 1 )
 i0l = lambda f, dx = dx: sum( f(x) * dx for x in numpy.arange(0, l, dx) )
-
-#d2 = lambda i: lambda x: i * x**(i - 2) * (l - x)**(i - 2) * ( i * (l - 2*x)**2 - l**2 + 2*l*x - 2 * x**2 )
-d2 = lambda i: lambda x: x**(i - 2) * ( i * (i - 1) * l - i * (i + 1) * x )
+d2 = lambda i: lambda x: derivative(phi[ i ], x, dx, 2)
 L  = lambda i, j: lambda x: d2(i)(x) * bas(j)(x)
 fp = lambda p: lambda x: f(x) * p(x)
 
-a = [ [ i0l( L(i, j) ) for i in range(mp, k + mp) ] for j in range(mp, k + mp) ]
+a = [ [ i0l( L(i, j) ) for j in range(k) ] for i in range(k) ]
 b = [ i0l( fp(p) ) for p in phi ]
 C = numpy.linalg.solve(a, b)
-
-#print sum( c * i0l( L(i, mp + 4) ) for c, i in zip(C, range(mp, k + mp)) )
-#print i0l( fp(phi[4]) )
 
 y = lambda x: A + B * x + sum( c * p(x) for c, p in zip( C, phi ) )
 
