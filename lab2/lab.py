@@ -1,13 +1,14 @@
 import math, numpy, matplotlib.pyplot as plt
 from scipy.misc import derivative
 
-l = 1.0
+l  = 1.0
 mp = 1
-N = 77
+N  = 87
 dx = 1e-2
 
 u = lambda x: math.e**x * math.sin(x)**2
-f = lambda x: 0.5 * math.e**x * ( 4 * math.sin(2 * x) + 3 * math.cos(2 * x) + 1 )
+f = lambda x: 0.5 * math.e**x * \
+            ( 4 * math.sin(2 * x) + 3 * math.cos(2 * x) + 1 )
 
 A = 0
 B = math.e**l * math.sin(l)**2 / l
